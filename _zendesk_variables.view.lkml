@@ -2,10 +2,10 @@ view: _variables {
 
 # Schema Name for the Zendesk data - Fivetran default is 'zendesk'
 # Must do a find/replace for this variable.
-  dimension: _SCHEMA_NAME {
+  dimension: zendesk {
     type: string
     hidden: yes
-    sql: 'zendesk' ;;
+    sql: 'zendesk_ft' ;;
   }
 
 # Name of your company Zendesk instance (i.e. looker.zendesk.com)
@@ -13,7 +13,7 @@ view: _variables {
   dimension: _ZENDESK_INSTANCE_DOMAIN {
     type: string
     hidden: yes
-    sql: 'looker' ;;
+    sql: 'dozens.zendesk.com' ;;
   }
 
 # Name of your company Looker instance (i.e. company_name.looker.com)
@@ -21,7 +21,7 @@ view: _variables {
   dimension: _LOOKER_INSTANCE_DOMAIN {
     type: string
     hidden: yes
-    sql: 'fivetrandemo' ;;
+    sql: 'dozens.eu.looker.com' ;;
   }
 
 # Once you convert the Dashboard from LookML, the ID of the Zendesk Ticket Detail Dashboard
