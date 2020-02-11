@@ -2,7 +2,7 @@ include: "_zendesk_variables.view"
 
 view: ticket {
   extends: [_variables]
-  sql_table_name: zendesk.ticket ;;
+  sql_table_name: zendesk_ft.ticket ;;
 
   # ----- database fields -----
   dimension: id {
@@ -201,7 +201,7 @@ view: ticket {
 
   dimension: days_since_updated {
     type: number
-    sql: 1.00 * DATE_DIFF(${_CURRENT_DATE}, ${last_updated_date}, DAY)  ;;
+    sql: 1.00 * DATEDIFF(day,${_CURRENT_DATE}, ${last_updated_date})  ;;
     html: {% if value > 60 %}
             <div style="color: white; background-color: darkred; font-size:100%; text-align:center">{{ rendered_value }}</div>
           {% else %}
@@ -388,7 +388,7 @@ view: ticket {
 
 view: user {
   extends: [_variables]
-  sql_table_name: zendesk.user ;;
+  sql_table_name: zendesk_ft.user ;;
   extension: required
 
   dimension: id {
@@ -531,7 +531,7 @@ view: ticket_comment {
 
   derived_table: {
     sql: SELECT *, row_number() over (partition by ticket_id order by created asc) as comment_sequence
-      FROM zendesk.ticket_comment ;;
+      FROM zendesk_ft.ticket_comment ;;
   }
 
   dimension: id {
@@ -605,7 +605,7 @@ view: ticket_comment {
 }
 
 view: ticket_field_history {
-  sql_table_name: zendesk.ticket_field_history ;;
+  sql_table_name: zendesk_ft.ticket_field_history ;;
 
   dimension: field_name {
     type: string
@@ -645,7 +645,7 @@ view: ticket_field_history {
 }
 
 view: organization {
-  sql_table_name: zendesk.organization ;;
+  sql_table_name: zendesk_ft.organization ;;
 
   # Just as agents can be segmented into groups in Zendesk Support, your customers (end-users)
   # can be segmented into organizations. You can manually assign customers to an organization
@@ -701,7 +701,7 @@ view: organization {
 }
 
 view: organization_member {
-  sql_table_name: zendesk.organization_member ;;
+  sql_table_name: zendesk_ft.organization_member ;;
 
   dimension: id {
     primary_key: yes
@@ -725,7 +725,7 @@ view: organization_member {
 
 view: group {
   view_label: "Organization"
-  sql_table_name: zendesk.`group` ;;
+  sql_table_name: zendesk_ft.`group` ;;
 
   # When support requests arrive in Zendesk Support, they can be assigned to a Group.
   # Groups serve as the core element of ticket workflow; support agents are organized into
@@ -784,7 +784,7 @@ view: group {
 }
 
 view: group_member {
-  sql_table_name: zendesk.group_member ;;
+  sql_table_name: zendesk_ft.group_member ;;
 
   dimension: id {
     primary_key: yes
@@ -808,7 +808,7 @@ view: group_member {
 
 view: brand {
   view_label: "Ticket"
-  sql_table_name: zendesk.brand ;;
+  sql_table_name: zendesk_ft.brand ;;
 
   dimension: id {
     primary_key: yes
@@ -841,10 +841,10 @@ view: ticket_history_facts {
           ,count(distinct case when field_name = 'assignee_id' then value else null end) as number_of_distinct_assignees
           ,count(distinct case when field_name = 'group_id' then value else null end) as number_of_distinct_groups
 
-      FROM zendesk.ticket_field_history as tfh
+      FROM zendesk_ft.ticket_field_history as tfh
       LEFT JOIN (
           SELECT ticket_id, created, row_number() over (partition by ticket_id order by created asc) as comment_sequence
-          FROM zendesk.ticket_comment
+          FROM zendesk_ft.ticket_comment
       ) tc on tc.ticket_id = tfh.ticket_id and tc.comment_sequence = 2
       GROUP BY tfh.ticket_id, tc.created ;;
   }
@@ -1037,7 +1037,7 @@ view: number_of_reopens {
   derived_table: {
     sql:  WITH grouped_ticket_status_history AS (
             SELECT *
-            FROM zendesk.ticket_field_history
+            FROM zendesk_ft.ticket_field_history
             WHERE field_name = 'status'
             ORDER BY ticket_id, updated
          ),
@@ -1101,7 +1101,7 @@ view: ticket_assignee_facts {
         , min(created_at) as first_ticket
         , max(created_at) as latest_ticket
         , 1.0 * COUNT(*) / NULLIF(DATE_DIFF(CURRENT_DATE, MIN(EXTRACT(date from created_at)), day), 0) AS avg_tickets_per_day
-      FROM zendesk.ticket
+      FROM zendesk_ft.ticket
       GROUP BY 1
        ;;
   }

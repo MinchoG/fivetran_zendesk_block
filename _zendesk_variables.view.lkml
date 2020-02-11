@@ -2,7 +2,7 @@ view: _variables {
 
 # Schema Name for the Zendesk data - Fivetran default is 'zendesk'
 # Must do a find/replace for this variable.
-  dimension: zendesk {
+  dimension: zendesk_ft {
     type: string
     hidden: yes
     sql: 'zendesk_ft' ;;
@@ -13,7 +13,7 @@ view: _variables {
   dimension: _ZENDESK_INSTANCE_DOMAIN {
     type: string
     hidden: yes
-    sql: 'dozens.zendesk.com' ;;
+    sql: 'dozens' ;;
   }
 
 # Name of your company Looker instance (i.e. company_name.looker.com)
