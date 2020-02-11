@@ -176,22 +176,22 @@ view: ticket {
 
   dimension: days_to_solve {
     type: number
-    sql: 1.00 * DATE_DIFF(${ticket_history_facts.solved_date}, ${created_date}, DAY) ;;
+    sql: 1.00 * DATEDIFF(DAY,${ticket_history_facts.solved_date}, ${created_date}) ;;
   }
 
   dimension: days_to_first_response {
     type: number
-    sql: 1.00 * DATE_DIFF(${ticket_history_facts.first_response_date}, ${created_date}, DAY) ;;
+    sql: 1.00 * DATEDIFF(DAY,${ticket_history_facts.first_response_date}, ${created_date}) ;;
   }
 
   dimension: minutes_to_first_response {
     type: number
-    sql: 1.00 * DATETIME_DIFF(EXTRACT(DATETIME FROM ${ticket_history_facts.first_response_raw}), EXTRACT(DATETIME FROM ${created_raw}), MINUTE) ;;
+    sql: 1.00 * DATEDIFF(MINUTE,${ticket_history_facts.first_response_raw}, ${created_raw}) ;;
   }
 
   dimension: hours_to_solve {
     type: number
-    sql: 1.00 * DATETIME_DIFF(${ticket_history_facts.solved_raw}, ${created_raw}, HOUR) ;;
+    sql: 1.00 * datediff(HOUR,${ticket_history_facts.solved_raw}, ${created_raw}) ;;
   }
 
   dimension: is_responded_to {
